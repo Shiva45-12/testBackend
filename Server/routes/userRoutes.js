@@ -4,6 +4,7 @@ import {
   createUser,
   updateUser,
   deleteUser,
+  loginUser,
 } from "../controllers/adminController.js";
 import authenticateToken from "../middlewares/auth.js";
 
@@ -13,6 +14,8 @@ const router = express.Router();
 router.post("/send-otp", (req, res) => {
   res.json({ message: "OTP sent successfully", otp: "123456" });
 });
+
+router.post("/login", loginUser);
 
 // Protected routes (auth required)
 router.get("/users", authenticateToken, getUsers);
