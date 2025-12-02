@@ -58,40 +58,84 @@ export const createAdmin = async (req, res) => {
 };
 
 // User login with phone number only
+// export const loginUser = async (req, res) => {
+//   try {
+//     const { phone } = req.body;
+
+//     if (!phone) {
+//       return res.status(400).json({ message: "Phone number is required" });
+//     }
+
+//     const user = await User.findOne({ phone });
+//     if (!user) {
+//       return res.status(404).json({ message: "User not found" });
+//     }
+
+//     const token = jwt.sign(
+//       { id: user._id, phone: user.phone, role: 'user' },
+//       JWT_SECRET,
+//       { expiresIn: "1d" }
+//     );
+
+//     res.json({
+//       token,
+//       user: {
+//         id: user._id,
+//         name: user.name,
+//         email: user.email,
+//         phone: user.phone,
+//         role: user.role,
+//         status: user.status
+//       }
+//     });
+//   } catch (error) {
+//     res.status(500).json({ message: "Server error", error: error.message });
+//   }
+// };
+
+
+// Login User
+
 export const loginUser = async (req, res) => {
   try {
     const { phone } = req.body;
 
+    //  Check if phone is provided
     if (!phone) {
       return res.status(400).json({ message: "Phone number is required" });
     }
 
+    //  Find the user by phone number
     const user = await User.findOne({ phone });
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
+    //  Generate JWT token
     const token = jwt.sign(
-      { id: user._id, phone: user.phone, role: 'user' },
+      { id: user._id, phone: user.phone, role: user.role },
       JWT_SECRET,
       { expiresIn: "1d" }
     );
 
-    res.json({
+    //  Return response with token and user info
+    res.status(200).json({
+      message: "Login successful",
       token,
       user: {
         id: user._id,
         name: user.name,
-        email: user.email,
         phone: user.phone,
         role: user.role,
         status: user.status
       }
     });
+
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
+
 
 
 // get user
@@ -108,23 +152,52 @@ export const getUsers = async (req, res) => {
 
 // create user
 
+// export const createUser = async (req, res) => {
+//   try {
+//     const { name, email, role, status,phone } = req.body;
+    
+//     const existingUser = await User.findOne({ email });
+//     if (existingUser) {
+//       return res.status(400).json({ message: "User already exists" });
+//     }
+
+//     const user = new User({ name, email, role, status,phone });
+//     await user.save();
+
+//     res.status(201).json({ message: "User created successfully", user });
+//   } catch (error) {
+//     res.status(500).json({ message: "Server error", error: error.message });
+//   }
+// };
+
+
+// user register
+
 export const createUser = async (req, res) => {
   try {
-    const { name, email, role, status,phone } = req.body;
-    
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ message: "User already exists" });
+    const { name, role, status, phone } = req.body;
+
+    // Check if phone is provided
+    if (!phone) {
+      return res.status(400).json({ message: "Phone number is required" });
     }
 
-    const user = new User({ name, email, role, status,phone });
+    // Check if phone already exists
+    const existingUser = await User.findOne({ phone });
+    if (existingUser) {
+      return res.status(400).json({ message: "User with this phone number already exists" });
+    }
+
+    const user = new User({ name, role, status, phone });
     await user.save();
 
     res.status(201).json({ message: "User created successfully", user });
+
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
+
 
 
 // update user

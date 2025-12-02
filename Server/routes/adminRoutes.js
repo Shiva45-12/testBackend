@@ -12,6 +12,8 @@ import {
   getChartData,
   globalSearch
 } from "../controllers/adminController.js";
+
+
 import authenticateToken from "../middlewares/auth.js";
 
 const router = express.Router();
