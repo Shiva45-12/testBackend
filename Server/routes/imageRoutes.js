@@ -1,33 +1,72 @@
+
 import express from 'express';
 import { 
   uploadImage, 
-  getImage, 
   getAllImages, 
   getImageInfo, 
   updateImage, 
-  deleteImage, 
+  deleteImage,
+  getOptimizedImage,
+  uploadMultipleImages,
   upload 
 } from '../controllers/imageController.js';
 import { authenticateToken } from '../middlewares/auth.js';
 
 const router = express.Router();
 
-// Upload image (with multer middleware)
-router.post('/upload', authenticateToken, upload.single('image'), uploadImage);
+// Debug middleware to catch errors
+const debugMiddleware = (handler) => async (req, res, next) => {
+  // console.log(` [${req.method}] ${req.url}`);
+  // console.log('Headers:', req.headers);
+  // console.log('Body:', req.body);
+  // console.log('Files:', req.files || req.file);
+  
+  try {
+    await handler(req, res, next);
+  } catch (error) {
+    // console.error(' ERROR in route handler:', error);
+    // console.error('Stack:', error.stack);
+    next(error);
+  }
+};
 
-// Get all images (with pagination and filtering)
-router.get('/images', getAllImages);
+// Test endpoint
+router.get('/test', (req, res) => {
+  console.log(' Image routes test endpoint hit');
+  res.json({ 
+    success: true, 
+    message: 'Image routes are working',
+    timestamp: new Date().toISOString()
+  });
+});
 
-// Get image by filename (serves the actual file)
-router.get('/images/:filename', getImage);
+// Upload single image 
+router.post('/upload', 
+  authenticateToken, 
+  upload.single('image'), 
+  debugMiddleware(uploadImage)  
+);
 
-// Get image metadata by ID
-router.get('/images/info/:id', getImageInfo);
+// Upload multiple images
+router.post('/upload-multiple', 
+  authenticateToken, 
+  upload.array('images', 10),
+  debugMiddleware(uploadMultipleImages)
+);
 
-// Update image metadata
-router.put('/images/:id', authenticateToken, updateImage);
+// Get all images
+router.get('/images', debugMiddleware(getAllImages));
+
+// Get image info
+router.get('/images/info/:id', debugMiddleware(getImageInfo));
+
+// Get optimized image URL
+router.get('/images/optimized/:id', debugMiddleware(getOptimizedImage));
+
+// Update image
+router.put('/images/:id', authenticateToken, debugMiddleware(updateImage));
 
 // Delete image
-router.delete('/images/:id', authenticateToken, deleteImage);
+router.delete('/images/:id', authenticateToken, debugMiddleware(deleteImage));
 
 export default router;

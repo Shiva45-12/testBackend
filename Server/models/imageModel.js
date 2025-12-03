@@ -1,3 +1,4 @@
+// Server/models/imageModel.js
 import mongoose from 'mongoose';
 
 const imageSchema = new mongoose.Schema({
@@ -18,12 +19,16 @@ const imageSchema = new mongoose.Schema({
     required: true
   },
   path: {
-    type: String,
-    required: true
+    type: String
   },
   url: {
     type: String,
     required: true
+  },
+  cloudinaryId: {
+    type: String,
+    unique: true,
+    sparse: true
   },
   uploadedBy: {
     type: mongoose.Schema.Types.ObjectId,
@@ -41,14 +46,23 @@ const imageSchema = new mongoose.Schema({
   },
   metadata: {
     type: Object,
-    default: {}
+    default: {
+      width: null,
+      height: null,
+      format: null,
+      bytes: null,
+      resource_type: 'image',
+      description: ''
+    }
   }
 }, {
   timestamps: true
 });
 
-// Add a text index for searching
-imageSchema.index({ originalName: 'text', category: 'text' });
+// Index for searching
+imageSchema.index({ cloudinaryId: 1 });
+imageSchema.index({ category: 1, isActive: 1 });
+imageSchema.index({ uploadedBy: 1, createdAt: -1 });
 
 const Image = mongoose.model('Image', imageSchema);
 
