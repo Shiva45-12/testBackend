@@ -24,7 +24,7 @@ app.use('/uploads', express.static('uploads'));
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/dairyapp')
-  .then(() => console.log('✅ MongoDB Connected Successfully'))
+  .then(() => console.log(' MongoDB Connected Successfully'))
   .catch(err => {
     process.exit(1);
   });

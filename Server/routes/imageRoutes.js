@@ -10,7 +10,7 @@ const router = express.Router();
 router.post('/upload', upload.single('image'), uploadImage);
 
 // Get All Images
-router.get('/', getAllImages);
+router.get('/images', getAllImages);
 
 // Delete Image
 router.delete('/:id', deleteImage);
