@@ -46,6 +46,8 @@ app.get('/api/admin/dashboard/stats', (req, res) => {
   });
 });
 
+console.log("ENV TEST =>", process.env.CLOUDINARY_API_KEY);
+
 // Enhanced Health Check
 app.get('/api/health', (req, res) => {
   res.json({ 

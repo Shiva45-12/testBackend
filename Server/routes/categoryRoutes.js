@@ -10,7 +10,7 @@ import {
   createDefaultCategories
 } from '../controllers/categoryController.js';
 import { authenticateToken } from '../middlewares/auth.js';
-import { upload } from '../controllers/imageController.js';
+import upload from '../middlewares/upload.js';
 
 const router = express.Router();
 

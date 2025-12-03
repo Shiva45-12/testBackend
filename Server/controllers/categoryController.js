@@ -1,5 +1,5 @@
 import Category from '../models/categoryModel.js';
-import { upload } from './imageController.js'; // Reuse image upload
+// import { upload } from '../middlewares/upload.js';
 
 // Get all categories
 export const getAllCategories = async (req, res) => {
