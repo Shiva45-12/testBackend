@@ -42,15 +42,15 @@ export const updateOffer = async (req, res) => {
     );
 
     if (!offer) {
-      return res.status(404).json({ message: "Offer not found" });
+      return res.status(404).json({ message: "Offer not found !" });
     }
 
     res.json({
-      message: "Offer updated successfully",
+      message: "Offer updated  successfully",
       offer
     });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ message:  err.message });
   }
 };
 
