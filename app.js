@@ -4,11 +4,6 @@ dotenv.config();
 import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
-import adminRoutes from './Server/routes/adminRoutes.js';
-import userRoutes from './Server/routes/userRoutes.js';
-import offerRoutes from "./Server/routes/storeRoutes.js";
-import imageRoutes from "./Server/routes/imageRoutes.js";
-import categoryRoutes from "./Server/routes/categoryRoutes.js";
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -16,6 +11,7 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Create app FIRST
 const app = express();
 
 // Middleware
@@ -59,15 +55,22 @@ mongoose.connection.on('disconnected', () => {
   console.log('MongoDB disconnected');
 });
 
+// Import routes AFTER app is created
+import adminRoutes from './Server/routes/adminRoutes.js';
+import userRoutes from './Server/routes/userRoutes.js';
+import offerRoutes from "./Server/routes/storeRoutes.js";
+import imageRoutes from "./Server/routes/imageRoutes.js";
+import categoryRoutes from "./Server/routes/categoryRoutes.js";
+import productRoutes from './Server/routes/productRoutes.js';
+import summerSaleRoutes from './Server/routes/summerSaleRoutes.js';
+
 // Routes
 app.use('/api/admin', adminRoutes);
 app.use('/api/users', userRoutes);
 app.use("/api/stores", offerRoutes);
-app.use("/api/images", imageRoutes); // Fixed: Consistent naming
+app.use("/api/images", imageRoutes);
 app.use("/api/categories", categoryRoutes);
-
-// Add Summer Sale Routes if needed
-import summerSaleRoutes from './Server/routes/summerSaleRoutes.js';
+app.use('/api/products', productRoutes); // ✅ MOVED HERE
 app.use("/api/summer-sale", summerSaleRoutes);
 
 // Dashboard Stats Route
@@ -132,6 +135,7 @@ app.get('/api', (req, res) => {
       stores: '/api/stores',
       images: '/api/images',
       categories: '/api/categories',
+      products: '/api/products', // ✅ Added products endpoint
       summerSale: '/api/summer-sale',
       health: '/api/health',
       envCheck: '/api/env-check'
@@ -170,7 +174,5 @@ app.use((err, req, res, next) => {
   });
 });
 
-const PORT = process.env.PORT || 5000;
-
-
+// Export app
 export default app;
