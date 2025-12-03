@@ -1,5 +1,7 @@
 // Server/controllers/offerController.js
-import Offer from "../models/offerModel.js";
+// import Offer from "../models/offerModel.js";
+import Offer from '../models/offerModel.js'
+
 
 // GET active offers for app homepage marquee
 export const getOffers = async (req, res) => {
