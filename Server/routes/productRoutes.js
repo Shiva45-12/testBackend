@@ -1,4 +1,3 @@
-
 import express from 'express';
 import {
   createProduct,
@@ -13,13 +12,16 @@ import {
   updateProductStock,
   getCategoriesWithCount
 } from '../controllers/productController.js';
-import { productUpload } from '../utils/multerConfig.js';
+
+// ✅ Correct Cloudinary compatible multer (memoryStorage)
+import upload from '../middlewares/upload.js';
+
 import jwt from 'jsonwebtoken';
 
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
-// Simple auth middleware (if you don't have auth.js)
+// Simple auth middleware
 const verifyToken = (req, res, next) => {
   const authHeader = req.headers.authorization;
   
@@ -68,42 +70,46 @@ const requireRole = (...allowedRoles) => {
 };
 
 // Public Routes
-router.get('/get-product', getProducts); // Get all products with filters
-router.get('/popular', getPopularProducts); // Get popular products
-router.get('/category/:category', getProductsByCategory); // Get products by category
-router.get('/discounted', getDiscountedProducts); // Get discounted products
-router.get('/categories', getCategoriesWithCount); // Get all categories with counts
-router.get('/:id', getProductById); // Get single product
-
+router.get('/get-product', getProducts); 
+router.get('/popular', getPopularProducts); 
+router.get('/category/:category', getProductsByCategory); 
+router.get('/discounted', getDiscountedProducts); 
+router.get('/categories', getCategoriesWithCount); 
+router.get('/:id', getProductById); 
 
 // Protected Routes (Admin only)
-router.post('/product',
+router.post(
+  '/product',
   verifyToken,
   requireRole('admin'),
-  productUpload.single('image'),
+  upload.single('image'),   // ✅ FIXED
   createProduct
 );
 
-router.put('/:id',
+router.put(
+  '/:id',
   verifyToken,
   requireRole('admin'),
-  productUpload.single('image'),
+  upload.single('image'),   // ✅ FIXED
   updateProduct
 );
 
-router.delete('/:id',
+router.delete(
+  '/:id',
   verifyToken,
   requireRole('admin'),
   deleteProduct
 );
 
-router.patch('/:id/popular',
+router.patch(
+  '/:id/popular',
   verifyToken,
   requireRole('admin'),
   markAsPopular
 );
 
-router.patch('/:id/stock',
+router.patch(
+  '/:id/stock',
   verifyToken,
   requireRole('admin'),
   updateProductStock
